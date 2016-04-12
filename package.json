@@ -1,0 +1,22 @@
+{
+  "name": "treem-backend",
+  "version": "1.0.0",
+  "description": "Backend for the TREEM project",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DiganmeGiovanni/TREEMBackend.git"
+  },
+  "author": "Giovanni Aguirre",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DiganmeGiovanni/TREEMBackend/issues"
+  },
+  "homepage": "https://github.com/DiganmeGiovanni/TREEMBackend#readme",
+  "dependencies": {
+    "express": "^4.13.4"
+  }
+}
