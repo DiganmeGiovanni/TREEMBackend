@@ -17,6 +17,10 @@
   },
   "homepage": "https://github.com/DiganmeGiovanni/TREEMBackend#readme",
   "dependencies": {
-    "express": "^4.13.4"
+    "body-parser": "^1.15.0",
+    "bson": "^0.4.23",
+    "express": "^4.13.4",
+    "mongoose": "^4.4.13",
+    "passport": "^0.3.2"
   }
 }
