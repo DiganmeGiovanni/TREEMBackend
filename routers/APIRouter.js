@@ -51,8 +51,11 @@ router.post('/user', userController.postUser)
 //
 //router.get('/od/redirectcode',   odSigninController.redirectWithCode)
 //router.get('/od/signinwithcode', odSigninController.signinWithCode)
-router.get('/od/user',     oDUserController.getODUser)
 router.get('/od/accounts', oDUserController.getODUsersForUser)
+router.get('/od/codelogin',oDUserController.oDCodeLogin)
+router.get('/od/redirect', oDUserController.oDRedirect)
+router.get('/od/user',     oDUserController.getODUser)
+
 
 router.post('/od/user',    oDUserController.postODUser)
 

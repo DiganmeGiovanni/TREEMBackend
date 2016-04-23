@@ -17,6 +17,15 @@ exports.findUser = function (email, callback) {
   })
 }
 
+exports.registerSession = function (user) {
+  user.lastSession = new Date()
+  user.sessionCount++
+
+  user.save(function (err, user) {
+    
+  })
+}
+
 exports.registerUser = function (user, callback) {
   userExists(user.email, function (err, userExists) {
     if (err) { callback(err, null) }
