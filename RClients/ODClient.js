@@ -16,6 +16,72 @@ var oDService   = require('../services/ODService')
 var userService = require('../services/UserService')
 var TREEMCons   = require('../constants/TREEMConstants')
 
+
+/**
+ * Uses a valid refresh token to get a new valid access token
+ *
+ * @param  {string}   refToken A valid refresh token emmited by OneDrive
+ * @param  {Function} callback Will be called with (err, accessToken)
+ */
+exports.accessTokenFromRefToken = function (refToken, callback) {
+  var targetUrl = TREEMCons.OD_LIVEAPI_LOGIN
+  var form = {
+    client_id:     TREEMCons.OD_CLIENT_ID,
+    redirect_uri:  TREEMCons.OD_REDIRECT_URL,
+    client_secret: TREEMCons.OD_CLIENT_SECRET,
+    grant_type:    'refresh_token',
+    refresh_token: refToken
+  }
+
+  request.post({url: targetUrl, form: form}, function (err, res, body) {
+    if (err) { callback(err, null) }
+    else {
+      body = JSON.parse(body)
+      if (!body.access_token) {
+        callback(body, null)
+      }
+      else {
+        callback(null, body.access_token)
+      }
+    }
+  })
+}
+
+exports.listChildren = function (oDEmail, parentId, filter, callback) {
+  oDService.obtainAccessToken(oDEmail, function (err, aToken) {
+    if (err) { callback(err, null) }
+    else {
+
+      var targetUrl = TREEMCons.OD_BASEPATH + 'drive/root/children'
+      if (parentId && parentId != "") {
+        targetUrl = TREEMCons.OD_BASEPATH + 'drive/items/' + parentId + '/children'
+      }
+
+      var reqOptions = {
+        url: targetUrl,
+        headers: {
+          Authorization: 'bearer ' + aToken
+        },
+        qs: {
+          select: 'id,name,parentReference,folder,file,audio',
+        }
+      }
+
+      if (filter && filter != "") {
+        reqOptions.qs.filter = filter + ' ne null'
+      }
+
+      request.get(reqOptions, function (err, res, body) {
+        if (err) { callback(err, null) }
+        else {
+          body = JSON.parse(body)
+          callback(null, body)
+        }
+      })
+    }
+  })
+}
+
 /**
  * Executes in three phases:
  *
@@ -78,7 +144,7 @@ exports.signinWithCode = function (odcode, callback) {
                 sessionCount: 1
               })
 
-              userService.registerUser(user, function (err, user) {
+              userService.upsertUser(user, function (err, user) {
                 if (err) { callback(err, null) }
                 else {
 
@@ -91,7 +157,7 @@ exports.signinWithCode = function (odcode, callback) {
                     tokenCreatedAt: new Date()
                   })
 
-                  oDService.registerUser(oDUser, function (err, oDUser) {
+                  oDService.upsertUser(oDUser, function (err, oDUser) {
                     if (err) { callback(err, null) }
                     else {
                       callback(null, user)
@@ -106,6 +172,7 @@ exports.signinWithCode = function (odcode, callback) {
     }
   })
 }
+
 
 /**
  * Gets basic info about the onedrive user, such as

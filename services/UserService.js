@@ -26,11 +26,11 @@ exports.registerSession = function (user) {
   })
 }
 
-exports.registerUser = function (user, callback) {
+exports.upsertUser = function (user, callback) {
   userExists(user.email, function (err, userExists) {
     if (err) { callback(err, null) }
     else if (userExists) {
-      User.findOne({'email': user.email}, function (err, user) {
+      User.findOne({email: user.email}, function (err, user) {
         if (err) { callback(err, null) }
         else {
           callback(null, user)

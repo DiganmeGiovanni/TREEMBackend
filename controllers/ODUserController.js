@@ -15,9 +15,12 @@ var ODUser = require('../entities/ODUser')
 var TREEMCons = require('../constants/TREEMConstants')
 
 
+////////////////////////////////////////////////////////////////////////////////
+/// Calls that consumes local data
+
 exports.postODUser = function (req, res) {
   if (!req.body.email || !req.body.odemail || !req.body.reftoken) {
-    errController.sendBadParams(ress)
+    errController.sendBadParams(res)
   }
   else {
 
@@ -28,7 +31,7 @@ exports.postODUser = function (req, res) {
       tokenCreatedAt: new Date()
     })
 
-    oDUserService.registerUser(oDUser, function (err, oDUser) {
+    oDUserService.upsertUser(oDUser, function (err, oDUser) {
       if (err) { errController.send500(res) }
       else {
         res.status(201)
@@ -69,8 +72,33 @@ exports.getODUsersForUser = function (req, res) {
     oDUserService.findODEmails(req.query.email, function (err, oDEmails) {
       if (err) { errController.send500(res) }
       else {
-        res.status(500)
+        res.status(200)
         res.json(oDEmails)
+      }
+    })
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+/// Calls that consumes OneDrive API
+
+exports.getChildren = function (req, res) {
+  if (!req.query.odemail) {
+    errController.sendBadParams(res)
+  }
+  else {
+    var oDEmail  = req.query.odemail
+    var parentId = req.query.parentId
+    var filter   = req.query.filter
+
+    oDClient.listChildren(oDEmail, parentId, filter, function (err, children) {
+      if (err) {
+        errController.send500(res)
+      }
+      else {
+        res.status(200)
+        res.json(children)
       }
     })
   }
@@ -101,8 +129,8 @@ exports.oDCodeLogin = function (req, res) {
 
 /**
  * This function is called by OneDrive api during signin/login process
- * with an authenticatoin code. User will be redirected to main webclient
- * page with authenticatoin code as query parameter.
+ * with an authentication code. User will be redirected to main web client
+ * page with authentication code as query parameter.
  *
  * @param  {[type]} req [description]
  * @param  {[type]} res [description]

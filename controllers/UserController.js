@@ -16,8 +16,6 @@ var User = require('../entities/User')
  * @param  {Object} req Express framework request object
  * @param  {Object} res Express framework response object
  *
- * @TODO Validate req params before create user
- * @TODO Check if user is yet registered
  */
 exports.postUser = function (req, res) {
   if (!req.body.fname || !req.body.lname || !req.body.email || !req.body.country) {
@@ -36,7 +34,7 @@ exports.postUser = function (req, res) {
       sessionCount: 1
     })
 
-    userService.registerUser(user, function (err, user) {
+    userService.upsertUser(user, function (err, user) {
       if (err) { errController.send500(res) }
       else {
         res.status(201)

@@ -15,7 +15,7 @@ var APIRouter = require('./routers/APIRouter')
 
 
 //
-// Application midleware initialization
+// Application middleware initialization
 
 var app = express()
 app.use(bodyParser.json())

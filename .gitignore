@@ -9,3 +9,8 @@ node_modules
 
 # npm cache history
 .npm
+
+# IntelliJ elements
+.idea/*
+*.iml
+*.impl
