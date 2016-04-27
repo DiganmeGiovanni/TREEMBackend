@@ -12,6 +12,7 @@ var oDUserService = require('../services/ODService')
 var userService   = require('../services/UserService')
 
 var ODUser = require('../entities/ODUser')
+var ODLibrary = require('../entities/ODLibrary')
 var TREEMCons = require('../constants/TREEMConstants')
 
 
@@ -97,8 +98,27 @@ exports.getChildren = function (req, res) {
         errController.send500(res)
       }
       else {
-        res.status(200)
-        res.json(children)
+
+        //
+        // Check if folder is library or not
+        ODLibrary.find({ODEmail: oDEmail}, function (err, oDLibraries) {
+          if (err) { errController.send500(res) }
+          else {
+            for (var i=0; i< children.value.length; i++) {
+              var isLibrary = false
+              for (var j=0; j< oDLibraries.length; j++) {
+                if (oDLibraries[j].folderId === children.value[i].id) {
+                  isLibrary = true
+                }
+              }
+
+              children.value[i].isTREEMLibrary = isLibrary
+            }
+
+            res.status(200)
+            res.json(children)
+          }
+        })
       }
     })
   }

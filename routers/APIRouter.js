@@ -12,7 +12,7 @@ var router  = express.Router();
 /*var authController      = require('../controllers/AuthController')*/
 var userController      = require('../controllers/UserController')
 var oDUserController    = require('../controllers/ODUserController')
-//var odLibraryController = require('../controllers/odLibraryController')
+var oDLibraryController = require('../controllers/ODLibraryController')
 //var odSigninController  = require('../controllers/odSigninController')
 
 
@@ -59,8 +59,11 @@ router.get('/od/redirect', oDUserController.oDRedirect)
 
 router.get('/od/children', oDUserController.getChildren)
 
+router.get('/od/libraries',oDLibraryController.getODLibraries)
+
 
 router.post('/od/user',    oDUserController.postODUser)
+router.post('/od/library', oDLibraryController.postODLibrary)
 
 //router.get('/od/libraries',      authController.isAuth, odLibraryController.getODLibraries);
 //router.post('/od/library',       authController.isAuth, odLibraryController.postODLibrary);
