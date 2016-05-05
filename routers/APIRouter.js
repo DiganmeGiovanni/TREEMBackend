@@ -21,7 +21,7 @@ var oDLibraryController = require('../controllers/ODLibraryController')
  * api endpoints.
  */
 router.use(function (req, res, next) {
-  console.log('Enabling CORS on request.')
+  //console.log('Enabling CORS on request.')
 
   res.header("Access-Control-Allow-Origin", "*")
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Authorization, Accept")
@@ -60,7 +60,8 @@ router.get('/od/redirect', oDUserController.oDRedirect)
 router.get('/od/children', oDUserController.getChildren)
 
 router.get('/od/libraries',oDLibraryController.getODLibraries)
-
+router.get('/od/scanlib',  oDLibraryController.scanLibrary)
+router.get('/od/scanlibs', oDLibraryController.scanLibraries)
 
 router.post('/od/user',    oDUserController.postODUser)
 router.post('/od/library', oDLibraryController.postODLibrary)

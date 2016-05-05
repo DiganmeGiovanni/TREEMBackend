@@ -5,7 +5,6 @@
  * @Created on: Apr 22, 2016
  */
 
-var User   = require('../entities/User')
 var ODUser = require('../entities/ODUser')
 var ODAToken = require('../entities/ODAToken')
 
@@ -44,7 +43,6 @@ exports.obtainAccessToken = function (oDEmail, callback) {
 
   ODAToken.findOne(queryParams, function (err, oDAToken) {
     if (err || !oDAToken) {
-      console.log('Valid access token NOT FOUND')
       ODUser.findOne({ODEmail: oDEmail}, function (err, oDUser) {
         if (err) { callback(err, null) }
         else {
@@ -54,7 +52,7 @@ exports.obtainAccessToken = function (oDEmail, callback) {
             }
             else {
               var expDate = new Date()
-              expDate.setTime(expDate.getTime() + 50000)
+              expDate.setTime(expDate.getTime() + (50 * 60 * 1000))
 
               oDAToken = new ODAToken({
                 ODEmail: oDEmail,
@@ -74,7 +72,6 @@ exports.obtainAccessToken = function (oDEmail, callback) {
       })
     }
     else {
-      console.log('Valid access token WAS FOUND')
       callback(null, oDAToken.aToken)
     }
   })
@@ -120,17 +117,3 @@ function userExists(oDEmail, callback) {
     }
   })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

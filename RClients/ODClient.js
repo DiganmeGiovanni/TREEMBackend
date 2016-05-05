@@ -74,8 +74,16 @@ exports.listChildren = function (oDEmail, parentId, filter, callback) {
       request.get(reqOptions, function (err, res, body) {
         if (err) { callback(err, null) }
         else {
-          body = JSON.parse(body)
-          callback(null, body)
+          try {
+            body = JSON.parse(body)
+            callback(null, body)
+          }
+          catch(e) {
+            console.error('Can not parse body:');
+            console.error(body);
+            console.error();
+            console.error(e);
+          }
         }
       })
     }
