@@ -8,6 +8,32 @@ var oDMCService = require('./ODMusicCollectionService')
 var oDClient    = require('../RClients/ODClient')
 
 
+function abortOldScan(oDEmail, callback) {
+  var oldestDate = new Date()
+  oldestDate.setTime(oldestDate.getTime() - (1000 * 60 * 10))
+
+  var query = {
+    ODEmail: oDEmail,
+    inProgress:1,
+    success: 0,
+    startedAt: { $lt: oldestDate}
+  }
+
+  ODBScan.findOne(query, function (err, oDBScan) {
+    if (!err && oDBScan) {
+
+      oDBScan.inProgress = 0
+      oDBScan.success = 1
+      oDBScan.save(function () {
+        callback()
+      })
+    }
+    else {
+      callback()
+    }
+  })
+}
+
 function clearScanningTask(oDEmail) {
   ODBScan.findOne({ODEmail: oDEmail}, function (err, oDBScan) {
     if (!err && oDBScan) {
@@ -17,6 +43,27 @@ function clearScanningTask(oDEmail) {
 
       oDBScan.save(function (oDBScan) { })
     }
+  })
+}
+
+function getScanStatus(oDEmail, callback) {
+  abortOldScan(oDEmail, function () {
+    ODBScan.findOne({ODEmail: oDEmail}, function (err, oDBScan) {
+      callback(err, oDBScan)
+    })
+  })
+}
+
+function inProgressScan(oDEmail, callback) {
+  abortOldScan(oDEmail, function () {
+    ODBScan.findOne({ODEmail: oDEmail, inProgress: 1, success: 0}, function (err, oDBScan) {
+      if (!err) {
+        callback(oDBScan)
+      }
+      else {
+        callback(null)
+      }
+    })
   })
 }
 
@@ -74,14 +121,13 @@ function retrieveODMCollection(oDEmail, callback) {
 }
 
 /**
- * TODO Rename to 'retrieveSubFoldersIds'
  * Retrieves all the children folders inside a given parent folder.
  *
  * @param  {string}   oDEmail  Owner of parent folder
  * @param  {string}   folderId Id of parent folder
  * @param  {Function} callback Called with an array of children ids
  */
-function retrieveSubfolders(oDEmail, folderId, callback) {
+function retrieveSubFoldersIds(oDEmail, folderId, callback) {
   oDClient.listChildren(oDEmail, folderId, 'folder', function (err, response) {
     if (err) { callback([]) }
     else {
@@ -159,7 +205,7 @@ function scanFolders(index, foldersIds, oDEmail, oDMCollection, callback) {
     scanAudioFolder(oDEmail, foldersIds[index], oDMCollection, function () {
 
       // Retrieve all sub folders inside folder and scan each one
-      retrieveSubfolders(oDEmail, foldersIds[index], function (subFoldersIds) {
+      retrieveSubFoldersIds(oDEmail, foldersIds[index], function (subFoldersIds) {
         if (subFoldersIds.length > 0) {
           scanFolders(0, subFoldersIds, oDEmail, oDMCollection, function () {
 
@@ -187,8 +233,14 @@ function scanAudioFolder(oDEmail, folderId, oDMCollection, callback) {
       oDMCService.upsertAudioFiles(audioFiles, oDMCollection)
       callback()
     }
+    else{
+      console.error('Error al scanear el folder: ' + folderId)
+      callback()
+    }
   })
 }
 
 
-exports.scanLibraries = scanLibraries
+exports.getScanStatus   = getScanStatus
+exports.inProgressScans = inProgressScan
+exports.scanLibraries   = scanLibraries

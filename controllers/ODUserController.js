@@ -148,7 +148,7 @@ exports.oDCodeLogin = function (req, res) {
 }
 
 /**
- * This function is called by OneDrive api during signin/login process
+ * This function is called by OneDrive api during signing/login process
  * with an authentication code. User will be redirected to main web client
  * page with authentication code as query parameter.
  *

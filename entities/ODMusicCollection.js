@@ -7,7 +7,6 @@
  */
 
 var mongoose = require('mongoose')
-var ODArtist = require('./ODArtist')
 
 var ODSongSchema = new mongoose.Schema({
   title: String,

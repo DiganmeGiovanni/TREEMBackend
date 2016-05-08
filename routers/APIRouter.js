@@ -13,7 +13,6 @@ var router  = express.Router();
 var userController      = require('../controllers/UserController')
 var oDUserController    = require('../controllers/ODUserController')
 var oDLibraryController = require('../controllers/ODLibraryController')
-//var odSigninController  = require('../controllers/odSigninController')
 
 
 /**
@@ -21,8 +20,6 @@ var oDLibraryController = require('../controllers/ODLibraryController')
  * api endpoints.
  */
 router.use(function (req, res, next) {
-  //console.log('Enabling CORS on request.')
-
   res.header("Access-Control-Allow-Origin", "*")
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Authorization, Accept")
 
@@ -47,10 +44,8 @@ router.post('/user', userController.postUser)
 
 
 // *****************************************************************************
-// ** ROUTING FOR ONEDRIVE
+// ** ROUTING FOR ONE DRIVE
 //
-//router.get('/od/redirectcode',   odSigninController.redirectWithCode)
-//router.get('/od/signinwithcode', odSigninController.signinWithCode)
 router.get('/od/accounts', oDUserController.getODUsersForUser)
 router.get('/od/user',     oDUserController.getODUser)
 
@@ -59,15 +54,12 @@ router.get('/od/redirect', oDUserController.oDRedirect)
 
 router.get('/od/children', oDUserController.getChildren)
 
-router.get('/od/libraries',oDLibraryController.getODLibraries)
-router.get('/od/scanlib',  oDLibraryController.scanLibrary)
-router.get('/od/scanlibs', oDLibraryController.scanLibraries)
+router.get('/od/libraries',  oDLibraryController.getODLibraries)
+router.get('/od/scanlibs',   oDLibraryController.scanLibraries)
+router.get('/od/scanstatus', oDLibraryController.scanStatus)
 
 router.post('/od/user',    oDUserController.postODUser)
 router.post('/od/library', oDLibraryController.postODLibrary)
-
-//router.get('/od/libraries',      authController.isAuth, odLibraryController.getODLibraries);
-//router.post('/od/library',       authController.isAuth, odLibraryController.postODLibrary);
 
 
 module.exports = router

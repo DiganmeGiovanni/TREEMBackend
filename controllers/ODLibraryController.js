@@ -6,7 +6,7 @@
  */
 
 var errController    = require('./ErrorController')
-var oDLibraryScanner = require('../services/ODLibraryScanner')
+var oDLibScanService = require('../services/ODLibScanService')
 
 var ODLibrary        = require('../entities/ODLibrary')
 
@@ -60,36 +60,37 @@ exports.scanLibraries = function (req, res) {
     errController.sendBadParams(res)
   }
   else {
-    // TODO Check for other scans in progress
-    oDLibraryScanner.scanLibraries(req.query.odemail)
-
-    res.status(200)
-    res.json({
-      'message': 'Library background scanning programed'
+    var oDEmail = req.query.odemail
+    oDLibScanService.inProgressScans(oDEmail, function (oDBScan) {
+      if (oDBScan) {
+        res.status(409)
+        res.json({
+          message: 'Currently there is another scan in progress'
+        })
+      }
+      else {
+        oDLibScanService.scanLibraries(oDEmail)
+        res.status(200)
+        res.json({
+          message: 'Libraries background scan started'
+        })
+      }
     })
   }
 }
 
-exports.scanLibrary = function (req, res) {
-  if (!req.query.odemail || !req.query.folderid) {
+exports.scanStatus = function (req, res) {
+  if (!req.query.odemail) {
     errController.sendBadParams(res)
   }
   else {
-    var oDEmail = req.query.odemail
-    var folderId= req.query.folderid
-
-    ODLibrary.find({ODEmail: oDEmail, folderId: folderId}, function (err, oDLibrary) {
-      if (err) {
+    oDLibScanService.getScanStatus(req.query.odemail, function (err, oDBScan) {
+      if (err || !oDBScan) {
         errController.send500(res)
       }
       else {
-        // TODO Check for other scans in progress
-        oDLibraryScanner.scanLibrary(oDLibrary)
-
         res.status(200)
-        res.json({
-          message: 'Library background scanning started'
-        })
+        res.json(oDBScan)
       }
     })
   }
