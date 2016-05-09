@@ -1,5 +1,9 @@
 
-var ODMusicCollection = require('../entities/ODMusicCollection')
+/**
+ * OneDrive Music Collection service
+ */
+
+var ODMCollection = require('../entities/ODMusicCollection')
 
 
 /**
@@ -12,7 +16,7 @@ var ODMusicCollection = require('../entities/ODMusicCollection')
  */
 function upsertAudioFiles(audioFiles, oDMCollection) {
   for (var i = 0; i < audioFiles.length; i++) {
-    upsertAudiofile(audioFiles[i], oDMCollection)
+    upsertAudioFile(audioFiles[i], oDMCollection)
   }
 }
 
@@ -23,7 +27,7 @@ function upsertAudioFiles(audioFiles, oDMCollection) {
  * @param  {Object}        audioFile     Item taken from OneDrive API request.
  * @param  {ODMCollection} oDMCollection Where to search/add the song
  */
-function upsertAudiofile(audioFile, oDMCollection) {
+function upsertAudioFile(audioFile, oDMCollection) {
   var artistName   = audioFile.audio.artist
   var albumTitle   = audioFile.audio.album
   var albumYear    = audioFile.audio.year
@@ -34,7 +38,7 @@ function upsertAudiofile(audioFile, oDMCollection) {
   var songTrackNo  = audioFile.audio.track
   var songGenre    = audioFile.audio.genre
   var songBitRate  = audioFile.audio.bitrate
-  var fileId       = audioFile.audio.id
+  var fileId       = audioFile.id
 
   // TODO Create durationFormatted ...
 
@@ -57,7 +61,6 @@ function upsertAudiofile(audioFile, oDMCollection) {
 
   var oDArtist = retrieveODArtist(artistName, oDMCollection)
   var oDAlbum  = retrieveODAlbum(album, oDArtist)
-  //console.log('Lets to upsert into: ' + oDAlbum.songs)
   upsertSong(song, oDAlbum)
 }
 
@@ -89,6 +92,7 @@ function upsertSong(song, oDAlbum) {
   }
 
   oDAlbum.songs.push(oDSong)
+  console.log(JSON.stringify(oDAlbum.songs[oDAlbum.songs.length - 1]))
   return oDAlbum.songs[oDAlbum.songs.length - 1]
 }
 
@@ -125,7 +129,7 @@ function retrieveODAlbum(album, oDArtist) {
  * it creates it and adds it to collection.
  *
  * @param  {string}              artistName    Name of the artist to search
- * @param  {ODMusicCollection}   oDMCollection Collection where to search
+ * @param  {ODMCollection}   oDMCollection Collection where to search
  * @return {ODArtist} The found/created ODArtist
  */
 function retrieveODArtist(artistName, oDMCollection) {
@@ -145,5 +149,30 @@ function retrieveODArtist(artistName, oDMCollection) {
   return oDMCollection.artists[oDMCollection.artists.length - 1]
 }
 
+/**
+ * Search for user's ODMCollection in database, if collection is not
+ * found, creates a new one (BUT NOT SAVES) and sends it to callback.
+ *
+ * @param  {string}   oDEmail  ODMCollection owner
+ * @param  {Function} callback Called with (err, oDMCollection)
+ */
+function retrieveODMCollection(oDEmail, callback) {
+  ODMCollection.findOne({ODEmail: oDEmail}, function (err, oDMCollection) {
+    if (err) { callback(err, null) }
+    else if (!oDMCollection) {
+      oDMCollection = new ODMCollection({
+        ODEmail: oDEmail,
+        artists: []
+      })
+
+      callback(null, oDMCollection)
+    }
+    else {
+      callback(null, oDMCollection)
+    }
+  })
+}
+
 
 exports.upsertAudioFiles = upsertAudioFiles
+exports.retrieveODMCollection = retrieveODMCollection

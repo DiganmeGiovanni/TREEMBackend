@@ -57,6 +57,8 @@ router.get('/od/children', oDUserController.getChildren)
 router.get('/od/libraries',  oDLibraryController.getODLibraries)
 router.get('/od/scanlibs',   oDLibraryController.scanLibraries)
 router.get('/od/scanstatus', oDLibraryController.scanStatus)
+router.get('/od/mcollection',oDLibraryController.getODMCollection)
+router.get('/od/itemdata',   oDLibraryController.getItem)
 
 router.post('/od/user',    oDUserController.postODUser)
 router.post('/od/library', oDLibraryController.postODLibrary)

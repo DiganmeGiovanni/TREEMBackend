@@ -7,6 +7,8 @@
 
 var errController    = require('./ErrorController')
 var oDLibScanService = require('../services/ODLibScanService')
+var oDMCollectionService = require('../services/ODMCollectionService')
+var oDClient = require('../RClients/ODClient')
 
 var ODLibrary        = require('../entities/ODLibrary')
 
@@ -24,6 +26,43 @@ exports.getODLibraries = function (req, res) {
       else {
         res.status(200)
         res.json(oDLibraries)
+      }
+    })
+  }
+}
+
+exports.getODMCollection = function (req, res) {
+  if (!req.query.odemail) {
+    errController.sendBadParams(res)
+  }
+  else {
+    oDMCollectionService.retrieveODMCollection(req.query.odemail, function (err, oDMCollection) {
+      if (err) {
+        errController.send500(res)
+      }
+      else {
+        res.status(200)
+        res.json(oDMCollection)
+      }
+    })
+  }
+}
+
+exports.getItem = function (req, res) {
+  if (!req.query.odemail || !req.query.itemid) {
+    errController.sendBadParams(res)
+  }
+  else {
+    var oDEmail = req.query.odemail
+    var itemId  = req.query.itemid
+    
+    oDClient.itemData(oDEmail, itemId, function (err, itemData) {
+      if (err) {
+        errController.send500(res)
+      }
+      else {
+        res.status(200)
+        res.json(itemData)
       }
     })
   }

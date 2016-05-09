@@ -37,4 +37,4 @@ var ODMusicCollectionSchema = new mongoose.Schema({
   artists: [ODArtistSchema]
 })
 
-module.exports = mongoose.model('ODMusicCollection', ODMusicCollectionSchema)
+module.exports = mongoose.model('ODMCollection', ODMusicCollectionSchema)

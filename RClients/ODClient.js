@@ -47,6 +47,32 @@ exports.accessTokenFromRefToken = function (refToken, callback) {
   })
 }
 
+exports.itemData = function (oDEmail, itemId, callback) {
+  oDService.obtainAccessToken(oDEmail, function (err, aToken) {
+    if (err) { callback(err, null) }
+    else {
+
+      var reqOptions = {
+        method: 'GET',
+        url: TREEMCons.OD_BASEPATH + 'drive/items/' + itemId,
+        headers: {
+          Authorization: 'bearer ' + aToken
+        }
+      }
+
+      request(reqOptions, function (err, res, body) {
+        if (err) {
+          callback(err, null)
+        }
+        else {
+          body = JSON.parse(body)
+          callback(null, body)
+        }
+      })
+    }
+  })
+}
+
 exports.listChildren = function (oDEmail, parentId, filter, callback) {
   oDService.obtainAccessToken(oDEmail, function (err, aToken) {
     if (err) { callback(err, null) }

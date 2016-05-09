@@ -1,10 +1,9 @@
 
 
 var ODLibrary     = require('../entities/ODLibrary')
-var ODMCollection = require('../entities/ODMusicCollection')
 var ODBScan       = require('../entities/ODBackgroundScan')
 
-var oDMCService = require('./ODMusicCollectionService')
+var oDMCService = require('./ODMCollectionService')
 var oDClient    = require('../RClients/ODClient')
 
 
@@ -97,30 +96,6 @@ function registerScanningTask(oDEmail, callback) {
 }
 
 /**
- * Search for user's ODMCollection in database, if collection is not
- * found, creates a new one (BUT NOT SAVES) and sends it to callback.
- *
- * @param  {string}   oDEmail  ODMCollection owner
- * @param  {Function} callback Called with (err, oDMCollection)
- */
-function retrieveODMCollection(oDEmail, callback) {
-  ODMCollection.findOne({ODEmail: oDEmail}, function (err, oDMCollection) {
-    if (err) { callback(err, null) }
-    else if (!oDMCollection) {
-      oDMCollection = new ODMCollection({
-        ODEmail: oDEmail,
-        artists: []
-      })
-
-      callback(null, oDMCollection)
-    }
-    else {
-      callback(null, oDMCollection)
-    }
-  })
-}
-
-/**
  * Retrieves all the children folders inside a given parent folder.
  *
  * @param  {string}   oDEmail  Owner of parent folder
@@ -158,7 +133,7 @@ function scanLibraries(oDEmail) {
       if (oDLibraries.length > 0) {
 
         // Retrieves user ODMCollection
-        retrieveODMCollection(oDEmail, function (err, oDMCollection) {
+        oDMCService.retrieveODMCollection(oDEmail, function (err, oDMCollection) {
           if (err) { console.error(err) }
           else {
 
@@ -190,6 +165,18 @@ function scanEachLibrary(index, oDLibraries, oDMCollection) {
     })
   }
   else {
+    oDMCollection.artists.sort(function (artist1, artist2) {
+      if (artist1.name > artist2.name) {
+        return 1
+      }
+      else if (artist1.name < artist2.name) {
+        return -1
+      }
+      else {
+        return 0
+      }
+    })
+
     oDMCollection.save(function (err, oDMCollection) {
 
       clearScanningTask(oDMCollection.ODEmail)
