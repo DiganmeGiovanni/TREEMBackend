@@ -8,6 +8,10 @@
 
 var mongoose = require('mongoose')
 
+var ODSongOwnerSchema = new mongoose.Schema({
+  ODEmail: String
+})
+
 var ODSongSchema = new mongoose.Schema({
   title: String,
   duration: Number,
@@ -15,7 +19,8 @@ var ODSongSchema = new mongoose.Schema({
   trackNo: Number,
   bitRate: Number,
   genre: String,
-  fileId: String
+  fileId: String,
+  ownerInfo: ODSongOwnerSchema
 })
 
 var ODAlbumSchema = new mongoose.Schema({
@@ -33,7 +38,7 @@ var ODArtistSchema = new mongoose.Schema({
 
 
 var ODMusicCollectionSchema = new mongoose.Schema({
-  ODEmail: String,
+  email: String,
   artists: [ODArtistSchema]
 })
 

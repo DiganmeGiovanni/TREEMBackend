@@ -32,11 +32,11 @@ exports.getODLibraries = function (req, res) {
 }
 
 exports.getODMCollection = function (req, res) {
-  if (!req.query.odemail) {
+  if (!req.query.email) {
     errController.sendBadParams(res)
   }
   else {
-    oDMCollectionService.retrieveODMCollection(req.query.odemail, function (err, oDMCollection) {
+    oDMCollectionService.retrieveODMCollection(req.query.email, function (err, oDMCollection) {
       if (err) {
         errController.send500(res)
       }
@@ -95,12 +95,13 @@ exports.postODLibrary = function (req, res) {
 }
 
 exports.scanLibraries = function (req, res) {
-  if (!req.query.odemail) {
+  if (!req.query.email) {
     errController.sendBadParams(res)
   }
   else {
-    var oDEmail = req.query.odemail
-    oDLibScanService.inProgressScans(oDEmail, function (oDBScan) {
+    var email = req.query.email
+    
+    oDLibScanService.inProgressScans(email, function (oDBScan) {
       if (oDBScan) {
         res.status(409)
         res.json({
@@ -108,7 +109,7 @@ exports.scanLibraries = function (req, res) {
         })
       }
       else {
-        oDLibScanService.scanLibraries(oDEmail)
+        oDLibScanService.scanLibraries(email)
         res.status(200)
         res.json({
           message: 'Libraries background scan started'
@@ -119,11 +120,11 @@ exports.scanLibraries = function (req, res) {
 }
 
 exports.scanStatus = function (req, res) {
-  if (!req.query.odemail) {
+  if (!req.query.email) {
     errController.sendBadParams(res)
   }
   else {
-    oDLibScanService.getScanStatus(req.query.odemail, function (err, oDBScan) {
+    oDLibScanService.getScanStatus(req.query.email, function (err, oDBScan) {
       if (err || !oDBScan) {
         errController.send500(res)
       }

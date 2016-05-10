@@ -8,13 +8,15 @@
  * @Updated on: Apr 23, 2015
  */
 
-var request        = require('request')
+var request = require('request')
 
-var User        = require('../entities/User')
-var ODUser      = require('../entities/ODUser')
+var User   = require('../entities/User')
+var ODUser = require('../entities/ODUser')
+
 var oDService   = require('../services/ODService')
 var userService = require('../services/UserService')
-var TREEMCons   = require('../constants/TREEMConstants')
+
+var TREEMCons = require('../constants/TREEMConstants')
 
 
 /**
@@ -47,6 +49,13 @@ exports.accessTokenFromRefToken = function (refToken, callback) {
   })
 }
 
+/**
+ * Recovers the metadata about a given item from user's drive
+ *
+ * @param oDEmail  Item's owner email
+ * @param itemId   Item's id
+ * @param callback
+ */
 exports.itemData = function (oDEmail, itemId, callback) {
   oDService.obtainAccessToken(oDEmail, function (err, aToken) {
     if (err) { callback(err, null) }
@@ -105,10 +114,11 @@ exports.listChildren = function (oDEmail, parentId, filter, callback) {
             callback(null, body)
           }
           catch(e) {
-            console.error('Can not parse body:');
-            console.error(body);
-            console.error();
-            console.error(e);
+            console.error()
+            console.error('Can not parse body: ' + e)
+            console.error(body)
+
+            callback(null, { value: [] })
           }
         }
       })

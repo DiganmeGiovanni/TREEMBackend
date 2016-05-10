@@ -11,7 +11,7 @@
 var mongoose = require('mongoose')
 
 var ODBackgroundScanSchema = new mongoose.Schema({
-  ODEmail: String,
+  email: String,
   startedAt: Date,
   inProgress: Boolean,
   success: Boolean
