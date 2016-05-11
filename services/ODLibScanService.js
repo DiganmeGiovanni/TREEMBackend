@@ -132,7 +132,7 @@ function scanLibraries(email) {
     if (!err) {
 
       if (oDEmails.length > 0) {
-        
+
         // Retrieve user's music collection
         oDMCService.retrieveODMCollection(email, function (err, oDMCollection) {
           if (!err) {
@@ -247,7 +247,7 @@ function scanAudioFolder(oDEmail, folderId, oDMCollection, callback) {
       }
     })
 
-  }, 400)
+  }, 150)
 
 }
 

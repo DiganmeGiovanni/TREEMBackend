@@ -55,7 +55,7 @@ exports.getItem = function (req, res) {
   else {
     var oDEmail = req.query.odemail
     var itemId  = req.query.itemid
-    
+
     oDClient.itemData(oDEmail, itemId, function (err, itemData) {
       if (err) {
         errController.send500(res)
@@ -63,6 +63,29 @@ exports.getItem = function (req, res) {
       else {
         res.status(200)
         res.json(itemData)
+      }
+    })
+  }
+}
+
+exports.itemContentsUrl = function (req, res) {
+  if (!req.query.odemail || !req.query.itemid) {
+    errController.sendBadParams(res)
+  }
+  else {
+    var oDEmail = req.query.odemail
+    var itemId  = req.query.itemid
+
+    oDClient.itemData(oDEmail, itemId, function (err, itemData) {
+      if (err) {
+        errController.send500(res)
+      }
+      else {
+        res.status(200)
+        res.json({
+          itemId: itemId,
+          contentsUrl: itemData['@content.downloadUrl']
+        })
       }
     })
   }
@@ -100,7 +123,7 @@ exports.scanLibraries = function (req, res) {
   }
   else {
     var email = req.query.email
-    
+
     oDLibScanService.inProgressScans(email, function (oDBScan) {
       if (oDBScan) {
         res.status(409)

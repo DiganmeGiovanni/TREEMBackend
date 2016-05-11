@@ -42,10 +42,16 @@ function upsertAudioFile(audioFile, oDEmail, oDMCollection) {
   var songBitRate  = audioFile.audio.bitrate
   var fileId       = audioFile.id
 
+  var albumCover   = ''
+  if (audioFile.thumbnails && audioFile.thumbnails[0]) {
+    albumCover = audioFile.thumbnails[0].medium.url
+  }
+
   // TODO Create durationFormatted ...
-  
+
 
   var album = {
+    coverUrl: albumCover,
     title: albumTitle,
     year: albumYear,
     disc: albumDisc,
@@ -68,6 +74,7 @@ function upsertAudioFile(audioFile, oDEmail, oDMCollection) {
   var oDArtist = retrieveODArtist(artistName, oDMCollection)
   var oDAlbum  = retrieveODAlbum(album, oDArtist)
   upsertSong(song, oDAlbum)
+  console.log('Upserted: ' + song.title)
 }
 
 /**
@@ -119,6 +126,7 @@ function retrieveODAlbum(album, oDArtist) {
   }
 
   var oDAlbum = {
+    coverUrl: album.coverUrl,
     title: album.title,
     year: album.year,
     disc: album.disc,

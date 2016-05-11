@@ -99,6 +99,7 @@ exports.listChildren = function (oDEmail, parentId, filter, callback) {
         },
         qs: {
           select: 'id,name,parentReference,folder,file,audio',
+          expand: 'thumbnails(select=medium)'
         }
       }
 

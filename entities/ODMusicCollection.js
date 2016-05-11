@@ -24,6 +24,7 @@ var ODSongSchema = new mongoose.Schema({
 })
 
 var ODAlbumSchema = new mongoose.Schema({
+  coverUrl: String,
   title: String,
   year: Number,
   disc: Number,
